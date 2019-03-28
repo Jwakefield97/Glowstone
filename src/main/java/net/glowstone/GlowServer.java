@@ -433,6 +433,8 @@ public class GlowServer implements Server {
     private static final Set<LibraryKey> blacklistedRuntimeLibs = ImmutableSet.of(
             new LibraryKey("it.unimi.dsi", "fastutil")
     );
+    
+    private static GlowWebServer webServer;
 
     /**
      * Creates a new server.
@@ -465,6 +467,7 @@ public class GlowServer implements Server {
         ipBans = new GlowBanList(this, Type.IP);
 
         loadConfig();
+        webServer = new GlowWebServer(this);
     }
 
     /**
@@ -486,6 +489,7 @@ public class GlowServer implements Server {
             }
 
             server.run();
+            webServer.run();
         } catch (SecurityException e) {
             ConsoleMessages.Error.CLASSPATH.log(e);
         } catch (Throwable t) {
