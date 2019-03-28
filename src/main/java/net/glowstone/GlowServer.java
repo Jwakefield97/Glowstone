@@ -434,7 +434,6 @@ public class GlowServer implements Server {
             new LibraryKey("it.unimi.dsi", "fastutil")
     );
     
-    private static GlowWebServer webServer;
 
     /**
      * Creates a new server.
@@ -467,7 +466,6 @@ public class GlowServer implements Server {
         ipBans = new GlowBanList(this, Type.IP);
 
         loadConfig();
-        webServer = new GlowWebServer(this);
     }
 
     /**
@@ -475,21 +473,20 @@ public class GlowServer implements Server {
      *
      * @param args The command-line arguments.
      */
-    public static void main(String... args) {
+    public static GlowServer makeServer(String... args) {
         try {
             GlowServer server = createFromArguments(args);
 
             // we don't want to run a server when called with --version, --help or --generate-config
             if (server == null) {
-                return;
+                return null;
             }
             if (generateConfigOnly) {
                 ConsoleMessages.Info.CONFIG_ONLY_DONE.log();
-                return;
+                return null;
             }
 
-            server.run();
-            webServer.run();
+            return server;
         } catch (SecurityException e) {
             ConsoleMessages.Error.CLASSPATH.log(e);
         } catch (Throwable t) {
@@ -497,6 +494,7 @@ public class GlowServer implements Server {
             ConsoleMessages.Error.STARTUP.log(t);
             System.exit(1);
         }
+        return null;
     }
 
     /**
